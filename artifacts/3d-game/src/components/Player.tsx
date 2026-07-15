@@ -2,7 +2,7 @@ import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { playerState, Controls } from '../gameState';
+import { playerState, Controls, touchInput } from '../gameState';
 
 export function Player() {
   const groupRef = useRef<THREE.Group>(null);
@@ -33,6 +33,10 @@ export function Player() {
     if (controls.back) dz += 1;
     if (controls.left) dx -= 1;
     if (controls.right) dx += 1;
+
+    // Blend in touch joystick input
+    dx += touchInput.dx;
+    dz += touchInput.dz;
 
     const moving = dx !== 0 || dz !== 0;
     if (moving) {

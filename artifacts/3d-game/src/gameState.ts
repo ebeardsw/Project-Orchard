@@ -13,3 +13,9 @@ export const playerState = {
 
 export const gameEvents = new EventTarget();
 export const dispatchBloom = () => gameEvents.dispatchEvent(new Event('bloom'));
+
+// Touch joystick state — written by Joystick component, read by Player in useFrame
+export const touchInput = {
+  dx: 0, // -1 to 1
+  dz: 0, // -1 to 1
+};
