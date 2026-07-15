@@ -1,9 +1,11 @@
 import { useRef, useState, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { playerState, dispatchBloom } from '../gameState';
+import { playerState, dispatchBloom, dispatchCutscene, shouldPlayCutscene } from '../gameState';
 import { CrystalFlower } from './CrystalFlower';
 import { Particles } from './Particles';
+
+const FIRST_BLOOM_VIDEO = '/videos/bloom-1.mp4'; // point this at wherever you host the clip
 
 export function FlowerBud({ position, id }: { position: [number, number, number], id: number }) {
     const budRef = useRef<THREE.Group>(null);
@@ -15,7 +17,12 @@ export function FlowerBud({ position, id }: { position: [number, number, number]
         if (state === 'dormant') {
             if (playerState.position.distanceTo(posVec) < 1.8) {
                 setState('blooming');
-                dispatchBloom();
+                if (shouldPlayCutscene()) {
+                    playerState.locked = true;
+                    dispatchCutscene(FIRST_BLOOM_VIDEO);
+                } else {
+                    dispatchBloom();
+                }
             } else {
                 if (budRef.current) {
                     const scale = 0.95 + Math.sin(stateCtx.clock.elapsedTime * 2 + id) * 0.05;

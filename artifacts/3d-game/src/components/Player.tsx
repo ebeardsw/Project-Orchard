@@ -25,6 +25,8 @@ export function Player() {
   }, []);
 
   useFrame((state, delta) => {
+    if (playerState.locked) return; // freeze during cutscene
+
     const controls = get();
     let dx = 0;
     let dz = 0;

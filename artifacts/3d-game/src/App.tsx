@@ -2,6 +2,7 @@ import { KeyboardControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Game } from './components/Game';
 import { HUD } from './components/HUD';
+import { CutsceneOverlay } from './components/CutsceneOverlay';
 import { Controls } from './gameState';
 
 const keyMap = [
@@ -20,6 +21,7 @@ export default function App() {
         </Canvas>
       </KeyboardControls>
       <HUD />
+      <CutsceneOverlay />
     </div>
   );
 }
