@@ -1,0 +1,55 @@
+import { useRef, useState, useMemo } from 'react';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+import { playerState, dispatchBloom } from '../gameState';
+import { CrystalFlower } from './CrystalFlower';
+import { Particles } from './Particles';
+
+export function FlowerBud({ position, id }: { position: [number, number, number], id: number }) {
+    const budRef = useRef<THREE.Group>(null);
+    const [state, setState] = useState<'dormant' | 'blooming' | 'bloomed'>('dormant');
+    const progress = useRef(0);
+    const posVec = useMemo(() => new THREE.Vector3(...position), [position]);
+    
+    useFrame((stateCtx, delta) => {
+        if (state === 'dormant') {
+            if (playerState.position.distanceTo(posVec) < 1.8) {
+                setState('blooming');
+                dispatchBloom();
+            } else {
+                if (budRef.current) {
+                    const scale = 0.95 + Math.sin(stateCtx.clock.elapsedTime * 2 + id) * 0.05;
+                    budRef.current.scale.setScalar(scale);
+                }
+            }
+        } else if (state === 'blooming') {
+            progress.current += delta / 1.5;
+            if (progress.current >= 1) {
+                progress.current = 1;
+                setState('bloomed');
+            }
+            if (budRef.current) {
+                budRef.current.scale.setScalar(1 - progress.current);
+            }
+        }
+    });
+
+    return (
+        <group position={position}>
+            {state !== 'bloomed' && (
+                <group ref={budRef}>
+                    <mesh position={[0, 0.3, 0]}>
+                        <sphereGeometry args={[0.2, 16, 16]} />
+                        <meshStandardMaterial color="#f8f5f0" roughness={0.4} />
+                    </mesh>
+                    <mesh position={[0, 0.15, 0]}>
+                        <cylinderGeometry args={[0.02, 0.02, 0.3]} />
+                        <meshStandardMaterial color="#f8f5f0" roughness={0.4} />
+                    </mesh>
+                </group>
+            )}
+            {state !== 'dormant' && <CrystalFlower progressRef={progress} id={id} />}
+            {state === 'blooming' && <Particles position={[0, 0.3, 0]} />}
+        </group>
+    );
+}

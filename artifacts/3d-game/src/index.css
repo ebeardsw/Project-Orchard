@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Space+Mono:wght@400&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --font-sans: 'Cinzel', serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+:root {
+  --background: 251 38% 13%; /* #1a1530 */
+  --foreground: 0 0% 100%;
+}
+.dark {
+  --background: 251 38% 13%;
+  --foreground: 0 0% 100%;
+}
+
+@layer base {
+  html, body, #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: hsl(var(--background));
+  }
+}
